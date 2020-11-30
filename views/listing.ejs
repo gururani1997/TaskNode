@@ -1,0 +1,122 @@
+<html>
+
+<head>
+  <script>
+
+    function downloadFile(data) {
+      let workbook = new Excel.Workbook();
+      let worksheet = workbook.addWorksheet('bookRecord')
+      worksheet.columns = [
+        { header: 'List Name', key: 'list_name' },
+        { header: 'Rank', key: 'rank' },
+        { header: 'Primary Isbn', key: 'primary_isbn' },
+        { header: 'Publisher', key: 'publisher' },
+        { header: 'Description', key: 'description' },
+        { header: 'Title', key: 'title' },
+        { header: 'Author', key: 'author' },
+        { header: 'Book_image', key: 'book_image' },
+        { header: 'Book_url', key: 'book_url' }
+      ]
+      // force the columns to be at least as long as their header row.
+      // Have to take this approach because ExcelJS doesn't have an autofit property.
+      worksheet.columns.forEach(column => {
+        column.width = column.header.length < 20 ? 30 : column.header.length
+      })
+
+      // Make the header bold.
+      // Note: in Excel the rows are 1 based, meaning the first row is 1 instead of 0.
+      worksheet.getRow(1).font = { bold: true }
+
+
+      // Dump all the data into Excel
+      data.forEach((e, index) => {
+        console.log('e:', e);
+        console.log('index:', index);
+
+        // By using destructuring we can easily dump all of the data into the row without doing much
+        // We can add formulas pretty easily by providing the formula property.
+        worksheet.addRow({
+          list_name: e.list_name,
+          rank: e.rank,
+          primary_isbn: e.primary_isbn,
+          publisher: e.publisher,
+          description: e.description,
+          title: e.title,
+          author: e.author,
+          book_image: e.book_image,
+          book_url: e.book_url,
+        })
+      })
+      alert("hiii i am here", e)
+      workbook.xlsx.writeFile('bookRecord.xlsx')
+      window.open('/bookRecord.xlsx')
+    }
+  </script>
+</head>
+
+<body>
+  <table class="table table-hover table-bordered" style="border: 1px solid;">
+    <thead>
+      <tr>
+        <th>list_name</th>
+        <th>rank</th>
+        <th>primary_isbn</th>
+        <th>publisher</th>
+        <th>description</th>
+        <th>title</th>
+        <th>auther</th>
+        <th>book_image</th>
+        <!-- <th>Created</th> -->
+        <th>buy now</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% for(var i=0; i<data.length; i++) { %>
+      <tr>
+        <% if(data[i].list_name == undefined ){ %>
+        <td class="datatable-text-wrap" style="text-transform: capitalize;"><span class="d-none"></span></td>
+        <% }else{ %>
+        <td class="datatable-text-wrap" style="text-transform: capitalize;"><span
+            class="d-none"><%= data[i].list_name; %></span></td>
+        <% } %><% if(data[i].rank == '' || data[i].rank == undefined ){ %>
+        <td class="datatable-text-wrap" style="text-transform: capitalize;"><span class="d-none"></span></td>
+        <% }else{ %>
+        <td class="datatable-text-wrap" style="text-transform: capitalize;"><span
+            class="d-none"><%= data[i].rank; %></span>
+        </td>
+        <% } %>
+        <td class="datatable-text-wrap"><%- (data[i].primary_isbn == 0)? "": data[i].primary_isbn; %></td>
+
+        <td class="datatable-text-wrap" id="contact">
+          <%- (data[i].publisher == 0)? "": data[i].publisher; %></td>
+
+        <td class="datatable-text-wrap" id="address">
+          <%- (data[i].description == 0)? "": data[i].description; %>
+        </td>
+
+        <td class="datatable-text-wrap">
+          <%- (data[i].title == 0)? "": data[i].title; %></td>
+        </td>
+        <td class="datatable-text-wrap">
+          <%- (data[i].author == 0)? "": data[i].author; %></td>
+        </td>
+        <td class="datatable-text-wrap">
+          <img src="<%-data[i].book_image%>" alt="" style="length:120px;width:50px;">
+        </td>
+        <td class="datatable-text-wrap">
+          <a href="<%-data[i].book_url%>" target="_blank">Buy Now.</a>
+        </td>
+        <td class="datatable-text-wrap">
+          <td>
+
+          </td>
+        </td>
+        </td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+</body>
+
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="stylesheet" href="http://159.89.234.66:1738/assets/welcome_signup/css/bootstrap.min.css" />
+    <title>Book App</title>
+    <link rel="shortcut icon" type="image/x-icon"
+        href="http://159.89.234.66:1738/assets/welcome_signup/img/favicon.ico">
+    <link rel="stylesheet" href="http://159.89.234.66:1738/assets/welcome_signup/css/fonts.css">
+    <link rel="stylesheet" href="http://159.89.234.66:1738/assets/welcome_signup/css/custom.css">
+    <style>
+        #myUL>li {
+            background-color: aliceblue;
+            border: 1px solid #DDDDDD;
+            padding: 5px;
+        }
+
+        .locationValue {
+            color: #1c0f2c;
+        }
+
+        #myUL {
+            z-index: 1000;
+            position: absolute;
+
+            width: 100%;
+            /* border: 2px solid #DDDDDD; */
+            background-color: white;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+            </div>
+        </div>
+    </header>
+    <!-- end:header -->
+
+
+    <section class="banner create_account">
+        <div class="container">
+            <div class="row d_align_center">
+                <div class="col-md-7 col-xl-8">
+                    <div class="b_info">
+                    </div>
+                    <!-- b_info -->
+                </div>
+
+                <div class="col-md-5 col-xl-4">
+                    <div class="sign_form">
+                        <h2>Check all Books</h2>
+
+                        <form name='signupForm' method="Post" action="">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <a class="btn_style1" href="http://localhost:8000/api/v1/allBooks">Check</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+        </div>
+    </section>
+    <!-- end:banner -->
+
+    <footer class="footer">
+        <div class="container">
+            <ul class="footer_links">
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Contact Us</a></li>
+                <li><a href="#">Terms & Conditions</a></li>
+            </ul>
+
+            <div class="copyright">
+                Copyright &copy; 2020 . All rights Reserved
+            </div>
+        </div>
+    </footer>
+    <!-- end:footer -->
+
+
+
+
+    <script src="http://159.89.234.66:1738/assets/welcome_signup/js/jquery.js"></script>
+    <script src="http://159.89.234.66:1738/assets/welcome_signup/js/bootstrap.min.js"></script>
+    <script src="http://159.89.234.66:1738/assets/welcome_signup/js/jquery.validate.min.js"></script>
+    <script src="http://159.89.234.66:1738/assets/welcome_signup/js/custom.validate.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <style>
+        label.error {
+            color: red
+        }
+    </style>
+    <script>
+
+
+        // jQuery.validator.addMethod('isemail', function (value, element, arg) {
+        //         jQuery.ajaxSetup({ async: false });
+        //         console.log("value", value);
+        //         var isSuccess = false;
+        //         $.get({
+        //             url: "http://localhost:5521/users/emailCheck?val=" + value,
+        //             async: false
+        //         }, function (data) {
+        //             console.log("data", data.data);
+        //             isSuccess = data.data === false ? true : false;
+        //         })
+        //         return isSuccess;
+        //     });
+
+
+        jQuery.validator.addMethod('isemail', function (value, element, arg) {
+            jQuery.ajaxSetup({ async: false });
+            console.log("value", value);
+            var isSuccess = false;
+            $.get(
+                "/emailCheck?val=" + value,
+                { async: false }
+                , function (data) {
+                    console.log("data", data.data);
+                    isSuccess = data.data === false ? true : false;
+                })
+            return isSuccess;
+        });
+
+        $("form[name='signupForm']").validate({
+            ignore: [],
+            rules: {
+                barName: {
+                    required: true,
+                    maxlength: 100,
+                    // alphanumeric: true
+                },
+                address: {
+                    maxlength: 150,
+                },
+                geoLocation: {
+                    required: true,
+                },
+                email: {
+                    required: true,
+                    email: true,
+                    isemail: 1
+                },
+                contact: {
+                    minlength: 10,
+                    maxlength: 15,
+                },
+            },
+
+
+            messages: {
+                username: {
+                    remote: "This name already exist in our system, Please use another.",
+                    noSpace: "Please do not use space."
+                },
+                fname: {
+                    remote: "space number and special character not allowed."
+                },
+                lname: {
+                    remote: "space number and special character not allowed."
+                },
+                email: {
+                    remote: "This email already exist in our system, Please use another.",
+                    isemail: 'This email address is already exists in the system, Please use other email address'
+                },
+                contact: {
+                    number: "value must be a number.",
+                    noSpace: "Please do not use space.",
+                },
+                deviceId: {
+                    remote: "This Device Id already exist ,Please use another."
+                },
+                images: {
+                    filesize: "File must be JPEG, JPG or PNG, less than 5MB.",
+                    filenumber: "Please select no more than 7 files",
+                },
+                geoLocation: {
+                    required: "Please search and select an address from suggestions",
+                },
+
+            },
+            errorPlacement: function (error, element) {
+                if (element.attr("name") == "hashtagsIds") {
+                    $('.hashtagsIds').append(error)
+                } else if (element.attr("name") == "user") {
+                    $('.userErrorContainer').append(error)
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            submitHandler: function (form) {
+                $(":submit").attr("disabled", true);
+                $("input, textarea,select,button").attr("disabled", true);
+                let postData = {
+                    businessType: $("[name='businessType']").val(),
+                    ownerFName: $("[name='firstName']").val(),
+                    ownerLName: $("[name='lastName']").val(),
+                    email: $("[name='email']").val(),
+                    contact: $("[name='contact']").val(),
+                    address: $("[name='address']").val(),
+                    geoLocation: $("[name='geoLocation']").val(),
+                    barName: $("[name='barName']").val(),
+                    roleId: $("[name='roleId']").val(),
+                    // organizationName:$("[name='organizationName']").val(),
+                    // newOrganizationName:$("[name='newOrganizationName']").val()
+                }
+                console.log(JSON.stringify("consoled data", postData));
+                if ($("[name='businessType']").val() == "Other") {
+                    postData.businessType = $("#businessType").val()
+                }
+                $.post("http://localhost:5521/signup", postData, function (result) {
+                    console.log("kbwdckjwb", result)
+                    if (result.status) {
+                        console.log("consoled data", postData);
+                        swal({
+                            title: "Thank You!",
+                            text: result.message,
+                            icon: "success",
+                        });
+                        $(".swal-button").removeAttr('disabled');
+
+
+                    } else {
+                        swal({
+                            title: "Thank You!",
+                            text: result.message,
+                            icon: "error",
+                        });
+                        $(".swal-button").removeAttr('disabled');
+                    }
+                });
+
+
+            }
+        });
+    </script>
+
+    <script>
+        $(document).on('click', ".swal-button", function () {
+            setTimeout(function () { location.reload(true); }, 1000);
+        });
+        $("[name='businessType']").change(() => {
+            if ($("[name='businessType']").val() == "Other") {
+                $("#businessType").show();
+                $("#businessType").prop('required', true);
+            } else {
+                $("#businessType").hide();
+                $("#businessType").prop('required', false);
+            }
+        })
+
+        $("#locations").keyup(function () {
+            let searchedText = $(this).val();
+            if (searchedText.length <= 1) {
+                $("[name='address']").val("");
+                $("[name='geoLocation']").val("")
+            }
+            let access_token = "pk.eyJ1Ijoiam9zZXBoYWxpIiwiYSI6ImNrMnlvcjluczBhYnMzZ3BtOW8xM2R3N2IifQ.PJZSNOGGYWhQbATDj8RJbA";
+            url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${searchedText}.json?limit=5&access_token=${access_token}`
+            $("#myUL").html("");
+            if (searchedText.length > 1) {
+                $.get(url, function (data) {
+                    if (data) {
+                        data.features.forEach((val) => {
+                            let coordinates = val.geometry.coordinates.toString();
+                            $("#myUL").append(`<li><a href="#" class="locationValue" coordinates="${coordinates}">${val.place_name}</a></li>`);
+                        })
+                    } else {
+                        $("#myUL").html("")
+                    }
+                })
+            }
+        })
+        $('#myUL').on('click', '.locationValue', function () {
+            $("#locations").val($(this).html());
+            $("[name='address']").val($(this).html())
+            $("[name='geoLocation']").val($(this).attr("coordinates"))
+            $("#myUL").html("")
+        });
+    </script>
+    <!-- You've probably already solved this problem, but it's worth noting for future reference that anyone else with the need to apply multiple masks to a control may want to explore this inputmask plugin.
+
+It has more callbacks, settings and many out of the box mask types(be sure to take a look at the extension files). You can also define multiple masks for a control, and the plugin will try and apply the appropriate mask based on the value.
+
+Here is a fiddle to demo the previous statement:
+
+$(window).load(function()
+{
+   var phones = [{ "mask": "(###) ###-####"}, { "mask": "(###) ###-##############"}];
+    $('#textbox').inputmask({ 
+        mask: phones, 
+        greedy: false, 
+        definitions: { '#': { validator: "[0-9]", cardinality: 1}} });
+}); -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.1.62/jquery.inputmask.bundle.js"></script>
+    <script>
+        $(window).load(function () {
+            var phones = [{ "mask": "(###) ###-####" }, { "mask": "(###) ###-##############" }];
+            $('#contact').inputmask({
+                mask: phones,
+                greedy: false,
+                definitions: { '#': { validator: "[0-9]", cardinality: 1 } }
+            });
+        });
+    </script>
+</body>
+
+</html>
